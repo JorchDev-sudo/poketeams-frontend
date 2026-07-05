@@ -1,17 +1,15 @@
 import { Controller } from "react-hook-form";
-import type { Control, FieldError } from "react-hook-form";
-import type { RegisterSchemaType, LoginSchemaType } from "../models";
-import ".AuthInputForm.css"
+import type { Control, FieldError, FieldValues, Path } from "react-hook-form";
 
-interface Props {
-  name: keyof RegisterSchemaType | keyof LoginSchemaType;
-  control: Control<RegisterSchemaType | LoginSchemaType>;
+interface Props<T extends FieldValues> {
+  name: Path<T>;
+  control: Control<T>;
   label: string;
   type?: string;
   error?: FieldError;
 }
 
-const InputForm = ({ name, control, label, type, error }: Props) => {
+const InputForm = <T extends FieldValues>({ name, control, label, type, error }: Props<T>) => {
   return (
     <div className="form-group">
       <label htmlFor={name}>{label}</label>
