@@ -23,21 +23,21 @@ interface LoginDto {
 async function handleResponse<AuthResponse>(response: Response): Promise<AuthResponse> {
   if (!response.ok) {
     const error = await response.json()
-    throw new Error(error.message || 'Error en el servidor')
+    throw new Error(error.message || 'Server error')
   }
   return response.json()
 }
 
 export const authApi = {
   register: (dto: RegisterDto): Promise<AuthResponse> =>
-    fetch(`${BASE_URL}/auth/register`, {
+    fetch(`http://localhost:8080/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(dto),
     }).then(res => handleResponse<AuthResponse>(res)),
 
   login: (dto: LoginDto): Promise<AuthResponse> =>
-    fetch(`${BASE_URL}/auth/login`, {
+    fetch(`http://localhost:8080/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(dto),
