@@ -1,7 +1,8 @@
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom'
 import {useAuth} from '../context/AuthContext'
-import {RegisterPage} from '../pages/RegisterPage/RegisterPage'
-import {LoginPage} from '../pages/LoginPage/LoginPage'
+import {RegisterPage} from '../pages/Register/RegisterPage'
+import {LoginPage} from '../pages/Login/LoginPage'
+import HomePage from '../pages/Home/Home'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const { isAuthenticated } = useAuth()
@@ -21,7 +22,7 @@ export function AppRouter() {
                 {/* Rutas protegidas */}
                 <Route path="/" element={
                     <ProtectedRoute>
-                        <div>Home Page</div>
+                        <HomePage />
                     </ProtectedRoute>
                 } />
 

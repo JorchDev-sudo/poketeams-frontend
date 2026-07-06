@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import InputForm from "./components/AuthInputForm";
+import InputForm from "./components/InputForm.tsx";
 import { registerSchema, loginSchema } from "./models/form.model";
 import { authApi } from "../../../lib/api.ts";
 import {useAuth} from "../../../context/AuthContext.tsx";
@@ -12,7 +12,13 @@ import type { RegisterSchemaType, LoginSchemaType } from "./models";
 export const RegisterForm = () => {
   const { control, handleSubmit, formState: { errors }, setError } = useForm<RegisterSchemaType>({
     resolver: zodResolver(registerSchema),
-    mode: "onBlur"
+    mode: "onBlur",
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: ''
+    }
   });
 
   const navigate = useNavigate()
@@ -44,7 +50,11 @@ export const RegisterForm = () => {
 export const LoginForm = () => {
   const { control, handleSubmit, formState: { errors }, setError } = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
-    mode: "onBlur"
+    mode: "onBlur",
+    defaultValues: {
+      email: '',
+      password: ''
+    }
   });
 
   const navigate = useNavigate()

@@ -19,7 +19,7 @@ interface LoginDto {
   email: string
   password: string
 }
-//Todo mejorar el tipado
+//Todo mejorar el tipado de error
 async function handleResponse<AuthResponse>(response: Response): Promise<AuthResponse> {
   if (!response.ok) {
     const error = await response.json()
@@ -30,14 +30,14 @@ async function handleResponse<AuthResponse>(response: Response): Promise<AuthRes
 
 export const authApi = {
   register: (dto: RegisterDto): Promise<AuthResponse> =>
-    fetch(`http://localhost:8080/auth/register`, {
+    fetch(`${BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(dto),
     }).then(res => handleResponse<AuthResponse>(res)),
 
   login: (dto: LoginDto): Promise<AuthResponse> =>
-    fetch(`http://localhost:8080/auth/login`, {
+    fetch(`${BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(dto),

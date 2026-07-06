@@ -4,7 +4,7 @@ import { SetContextLink } from '@apollo/client/link/context'
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const httpLink = new HttpLink({
-  uri: apiUrl,
+  uri: `${apiUrl}/graphql`
 })
 
 const authLink = new SetContextLink((prevContext) => {

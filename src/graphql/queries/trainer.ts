@@ -1,7 +1,7 @@
-import { gql } from '@apollo/client'
+import { graphql } from '../generated/gql'
 
-export const ME = gql`
-  query ME {
+export const Me = graphql(`
+  query me {
     me {
       id
       name
@@ -12,4 +12,4 @@ export const ME = gql`
       }
     }
   }
-`
+`)

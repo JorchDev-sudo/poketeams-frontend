@@ -1,1 +1,1 @@
-export * from './AuthInputForm';
+export * from './InputForm';
