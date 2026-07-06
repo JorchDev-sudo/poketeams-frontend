@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
+import { setLogoutCallback } from '../lib/apollo'
 
 type jwtToken = string | null
 
@@ -22,9 +23,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const logout = () => {
-        localStorage.removeItem('token')
-        setToken(null)
+        localStorage.removeItem('token')  
+        setToken(null)                    
     }
+
+    useEffect(() => {
+        setLogoutCallback(logout)
+    }, [])
 
     return (
         <AuthContext.Provider value={{
