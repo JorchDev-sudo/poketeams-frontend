@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client/react'
-import { Me } from '../../graphql/queries/trainer'
+import { Me } from '@/graphql/queries/trainer'
 import { useState } from 'react'
-import CreateTeamModal from '../../components/layout/CreateTeamModal/CreateTeamModal'
+import CreateTeamModal from '@/pages/Home/components/CreateTeamModal/CreateTeamModal'
 
 export default function HomePage() {
   const [isOpen, setIsOpen] = useState(false)
@@ -11,7 +11,7 @@ export default function HomePage() {
   if (error) return <p>Error: {error.message}</p>
   if (!data?.me) return null
 
-  const { me } = data 
+  const { me } = data
   console.log('me.team:', me.team)
 
   return (
@@ -31,7 +31,7 @@ export default function HomePage() {
         )
       }
 
-      <CreateTeamModal open={isOpen} onClose={() => setIsOpen(false)}/>
+      <CreateTeamModal open={isOpen} onClose={() => setIsOpen(false)} />
     </div>
   )
 }

@@ -2,10 +2,10 @@ import { useMutation } from '@apollo/client/react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../ui/dialog'
-import InputForm from '../../ui/AuthForm/components/InputForm'
-import { CREATE_TEAM } from '../../../graphql/mutations/team'
-import { Me } from '../../../graphql/queries/trainer'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import InputForm from '@/components/shared/InputForm/InputForm'
+import { CREATE_TEAM } from '@/graphql/mutations/team'
+import { Me } from '@/graphql/queries/trainer'
 
 const createTeamSchema = z.object({
   name: z.string().min(3).max(30)

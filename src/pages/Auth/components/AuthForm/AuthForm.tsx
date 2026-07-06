@@ -1,13 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import InputForm from "./components/InputForm.tsx";
-import { registerSchema, loginSchema } from "./models/form.model";
-import { authApi } from "../../../lib/api.ts";
-import {useAuth} from "../../../context/AuthContext.tsx";
+import InputForm from "@/components/shared/InputForm/InputForm.tsx"
+import { registerSchema, loginSchema, RegisterSchemaType, LoginSchemaType } from "@/pages/Auth/models/form.model.ts";
+import { authApi } from "@/lib/api.ts";
+import { useAuth } from "@/context/AuthContext.tsx";
 import { useNavigate } from "react-router-dom";
 import type { SubmitHandler } from "react-hook-form";
-import type { RegisterSchemaType, LoginSchemaType } from "./models";
-
 
 export const RegisterForm = () => {
   const { control, handleSubmit, formState: { errors }, setError } = useForm<RegisterSchemaType>({
@@ -25,14 +23,15 @@ export const RegisterForm = () => {
   const { login } = useAuth();
 
   const onSubmit: SubmitHandler<RegisterSchemaType> = async (data) => {
-    try{
+    try {
       const response = await authApi.register(data);
       login(response.token);
       navigate("/");
 
-    }catch(e){
+    } catch (e) {
       setError('root', {
-      message: e instanceof Error ? e.message : 'Unknown error'})
+        message: e instanceof Error ? e.message : 'Unknown error'
+      })
     }
   }
 
@@ -61,14 +60,15 @@ export const LoginForm = () => {
   const { login } = useAuth();
 
   const onSubmit: SubmitHandler<LoginSchemaType> = async (data) => {
-    try{
+    try {
       const response = await authApi.login(data);
       login(response.token);
       navigate("/");
 
-    }catch(e){
+    } catch (e) {
       setError('root', {
-      message: e instanceof Error ? e.message : 'Unknown error'})
+        message: e instanceof Error ? e.message : 'Unknown error'
+      })
     }
   }
 
