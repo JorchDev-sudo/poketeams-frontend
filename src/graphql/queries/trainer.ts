@@ -9,6 +9,10 @@ export const Me = graphql(`
       team {
         id
         name
+        pokemons{
+          id
+          name
+        }
       }
     }
   }

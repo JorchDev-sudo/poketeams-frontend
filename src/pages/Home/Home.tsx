@@ -2,9 +2,13 @@ import { useQuery } from '@apollo/client/react'
 import { Me } from '@/graphql/queries/trainer'
 import { useState } from 'react'
 import CreateTeamModal from '@/pages/Home/components/CreateTeamModal/CreateTeamModal'
+import TeamCard from '@/pages/Home/components/TeamCard/TeamCard'
+import TeamModal from './components/TeamModal/TeamModal'
 
 export default function HomePage() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isTeamOpen, setIsTeamOpen] = useState(false)
+
   const { data, loading, error } = useQuery(Me)
 
   if (loading) return <p>Cargando...</p>
@@ -12,7 +16,6 @@ export default function HomePage() {
   if (!data?.me) return null
 
   const { me } = data
-  console.log('me.team:', me.team)
 
   return (
     <div>
@@ -20,7 +23,12 @@ export default function HomePage() {
       {me.team
         ? (
           <div>
-            <h2>{me.team.name}</h2>
+            <TeamCard
+              id={me.team.id}
+              name={me.team.name}
+              pokemons={me.team.pokemons}
+              onClick={() => setIsTeamOpen(true)}
+            ></TeamCard>
           </div>
         )
         : (
@@ -32,6 +40,12 @@ export default function HomePage() {
       }
 
       <CreateTeamModal open={isOpen} onClose={() => setIsOpen(false)} />
+      <TeamModal
+        name={me.team?.name ?? ""}
+        pokemons={me.team?.pokemons ?? null}
+        open={isTeamOpen}
+        onClose={() => setIsTeamOpen(false)}>
+      </TeamModal>
     </div>
   )
 }
