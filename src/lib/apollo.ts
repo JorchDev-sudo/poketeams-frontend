@@ -6,7 +6,7 @@ import {
   CombinedProtocolErrors,
 } from "@apollo/client/errors";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_GRAPHQL_URL;
 
 const httpLink = new HttpLink({
   uri: `${apiUrl}/graphql`
@@ -56,5 +56,17 @@ const authLink = new SetContextLink((prevContext) => {
 
 export const client = new ApolloClient({
   link: ApolloLink.from([errorLink, authLink, httpLink]),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Team: {
+        fields: {
+          pokemons: {
+            merge(_, incoming) {
+              return incoming
+            }
+          }
+        }
+      }
+    }
+  }),
 })

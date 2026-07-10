@@ -1,4 +1,4 @@
-import {graphql} from '../generated/gql'
+import { graphql } from '../generated/gql'
 
 
 export const CREATE_TEAM = graphql(`
@@ -23,9 +23,36 @@ export const ADD_POKEMON_TO_TEAM = graphql(`
 }
 `)
 
+export const ADD_POKEMON_TO_TEAM_BY_NAME = graphql(`
+  mutation AddPokemonToTeamByName($pokemonName: String!) {
+    addPokemonToTeamByName(pokemonName: $pokemonName) {
+        id
+        name
+        pokemons{
+            id
+            name
+        }
+    }
+}
+`)
+
+
 export const REMOVE_POKEMON_FROM_TEAM = graphql(`
   mutation RemovePokemonFromTeam($pokemonId: Int!) {
     removePokemonFromTeam(pokemonId: $pokemonId) {
+        id
+        name
+        pokemons{
+            id
+            name
+        }
+    }
+}
+`)
+
+export const REMOVE_POKEMON_FROM_TEAM_BY_NAME = graphql(`
+  mutation RemovePokemonFromTeamByName($pokemonName: String!) {
+    removePokemonFromTeamByName(pokemonName: $pokemonName) {
         id
         name
         pokemons{

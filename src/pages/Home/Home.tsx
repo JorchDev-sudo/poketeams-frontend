@@ -42,7 +42,7 @@ export default function HomePage() {
       <CreateTeamModal open={isOpen} onClose={() => setIsOpen(false)} />
       <TeamModal
         name={me.team?.name ?? ""}
-        pokemons={me.team?.pokemons ?? null}
+        pokemons={me.team?.pokemons ?? []}
         open={isTeamOpen}
         onClose={() => setIsTeamOpen(false)}>
       </TeamModal>
