@@ -11,11 +11,10 @@ interface AuthResponse {
   }
 }
 
-interface PokemonsResponse {
-  pokemons: {
-    name: string
-    url: string
-  }[]
+interface PokemonResponse {
+  name: string
+  url: string
+  pokemonId: number
 }
 
 interface RegisterDto {
@@ -53,9 +52,9 @@ export const authApi = {
     }).then(res => handleResponse<AuthResponse>(res)),
 }
 
-export function getPokemons(pokemonName: String): Promise<PokemonsResponse> {
+export function getPokemons(pokemonName: String): Promise<PokemonResponse[]> {
   return fetch(`${REST_BASE_URL}/api/pokemon/search/contains?name=${pokemonName}`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
-  }).then(res => handleResponse<PokemonsResponse>(res))
+  }).then(res => handleResponse<PokemonResponse[]>(res))
 }

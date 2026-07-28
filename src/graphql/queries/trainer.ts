@@ -11,6 +11,7 @@ export const Me = graphql(`
         name
         pokemons{
           id
+          pokemonId
           name
         }
       }

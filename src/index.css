@@ -1,12 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
-/*
-  Tailwind v4 usa CSS puro para theming (nada de tailwind.config.js para colores).
-  @theme inline le dice a Tailwind "genera las utilities bg-primary, text-primary, etc.
-  a partir de estas variables". Las variables en sí viven en :root para poder
-  redefinirlas fácil (ej. en un futuro .dark { ... }).
-*/
 @theme inline {
     --color-background: var(--background);
     --color-foreground: var(--foreground);

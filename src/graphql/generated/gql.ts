@@ -15,23 +15,23 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
     "\n  mutation CreateTeam($name: String!) {\n    createTeam(name: $name) {\n      id\n      name\n    }\n  }\n": typeof types.CreateTeamDocument,
-    "\n  mutation AddPokemonToTeam($pokemonId: Int!) {\n    addPokemonToTeam(pokemonId: $pokemonId) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n": typeof types.AddPokemonToTeamDocument,
-    "\n  mutation AddPokemonToTeamByName($pokemonName: String!) {\n    addPokemonToTeamByName(pokemonName: $pokemonName) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n": typeof types.AddPokemonToTeamByNameDocument,
-    "\n  mutation RemovePokemonFromTeam($pokemonId: Int!) {\n    removePokemonFromTeam(pokemonId: $pokemonId) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n": typeof types.RemovePokemonFromTeamDocument,
-    "\n  mutation RemovePokemonFromTeamByName($pokemonName: String!) {\n    removePokemonFromTeamByName(pokemonName: $pokemonName) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n": typeof types.RemovePokemonFromTeamByNameDocument,
+    "\n  mutation AddPokemonToTeamById($pokemonId: Int!) {\n    addPokemonToTeamById(pokemonId: $pokemonId) {\n        id\n        name\n        pokemons{\n            id\n            pokemonId\n            name\n        }\n    }\n}\n": typeof types.AddPokemonToTeamByIdDocument,
+    "\n  mutation AddPokemonToTeamByName($pokemonName: String!) {\n    addPokemonToTeamByName(pokemonName: $pokemonName) {\n        id\n        name\n        pokemons{\n            id\n            pokemonId\n            name\n        }\n    }\n}\n": typeof types.AddPokemonToTeamByNameDocument,
+    "\n  mutation RemovePokemonFromTeamById($id: ID!) {\n    removePokemonFromTeamById(id: $id) {\n        id\n        name\n        pokemons{\n            id\n            pokemonId\n            name\n        }\n    }\n}\n": typeof types.RemovePokemonFromTeamByIdDocument,
+    "\n  mutation movePokemons($positions: [PokemonPositionInput!]!) {\n    movePokemons(positions: $positions) {\n      id\n      name\n      pokemons {\n        id\n        name\n        position\n      }\n    }\n}\n": typeof types.MovePokemonsDocument,
     "\n  query FindAllTeams {\n    findAllTeams {\n      id\n      name\n      trainer {\n        id\n        name\n      }\n      pokemons {\n        id\n        name\n      }\n    }\n  }\n": typeof types.FindAllTeamsDocument,
     "\n  query FindTeamById($id: ID!) {\n    findTeamById(id: $id) {\n      id\n      name\n      trainer {\n        id\n        name\n      }\n      pokemons {\n        id\n        name\n      }\n    }\n  }\n": typeof types.FindTeamByIdDocument,
-    "\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          name\n        }\n      }\n    }\n  }\n": typeof types.MeDocument,
+    "\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          pokemonId\n          name\n        }\n      }\n    }\n  }\n": typeof types.MeDocument,
 };
 const documents: Documents = {
     "\n  mutation CreateTeam($name: String!) {\n    createTeam(name: $name) {\n      id\n      name\n    }\n  }\n": types.CreateTeamDocument,
-    "\n  mutation AddPokemonToTeam($pokemonId: Int!) {\n    addPokemonToTeam(pokemonId: $pokemonId) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n": types.AddPokemonToTeamDocument,
-    "\n  mutation AddPokemonToTeamByName($pokemonName: String!) {\n    addPokemonToTeamByName(pokemonName: $pokemonName) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n": types.AddPokemonToTeamByNameDocument,
-    "\n  mutation RemovePokemonFromTeam($pokemonId: Int!) {\n    removePokemonFromTeam(pokemonId: $pokemonId) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n": types.RemovePokemonFromTeamDocument,
-    "\n  mutation RemovePokemonFromTeamByName($pokemonName: String!) {\n    removePokemonFromTeamByName(pokemonName: $pokemonName) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n": types.RemovePokemonFromTeamByNameDocument,
+    "\n  mutation AddPokemonToTeamById($pokemonId: Int!) {\n    addPokemonToTeamById(pokemonId: $pokemonId) {\n        id\n        name\n        pokemons{\n            id\n            pokemonId\n            name\n        }\n    }\n}\n": types.AddPokemonToTeamByIdDocument,
+    "\n  mutation AddPokemonToTeamByName($pokemonName: String!) {\n    addPokemonToTeamByName(pokemonName: $pokemonName) {\n        id\n        name\n        pokemons{\n            id\n            pokemonId\n            name\n        }\n    }\n}\n": types.AddPokemonToTeamByNameDocument,
+    "\n  mutation RemovePokemonFromTeamById($id: ID!) {\n    removePokemonFromTeamById(id: $id) {\n        id\n        name\n        pokemons{\n            id\n            pokemonId\n            name\n        }\n    }\n}\n": types.RemovePokemonFromTeamByIdDocument,
+    "\n  mutation movePokemons($positions: [PokemonPositionInput!]!) {\n    movePokemons(positions: $positions) {\n      id\n      name\n      pokemons {\n        id\n        name\n        position\n      }\n    }\n}\n": types.MovePokemonsDocument,
     "\n  query FindAllTeams {\n    findAllTeams {\n      id\n      name\n      trainer {\n        id\n        name\n      }\n      pokemons {\n        id\n        name\n      }\n    }\n  }\n": types.FindAllTeamsDocument,
     "\n  query FindTeamById($id: ID!) {\n    findTeamById(id: $id) {\n      id\n      name\n      trainer {\n        id\n        name\n      }\n      pokemons {\n        id\n        name\n      }\n    }\n  }\n": types.FindTeamByIdDocument,
-    "\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          name\n        }\n      }\n    }\n  }\n": types.MeDocument,
+    "\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          pokemonId\n          name\n        }\n      }\n    }\n  }\n": types.MeDocument,
 };
 
 /**
@@ -55,19 +55,19 @@ export function graphql(source: "\n  mutation CreateTeam($name: String!) {\n    
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation AddPokemonToTeam($pokemonId: Int!) {\n    addPokemonToTeam(pokemonId: $pokemonId) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n"): (typeof documents)["\n  mutation AddPokemonToTeam($pokemonId: Int!) {\n    addPokemonToTeam(pokemonId: $pokemonId) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n"];
+export function graphql(source: "\n  mutation AddPokemonToTeamById($pokemonId: Int!) {\n    addPokemonToTeamById(pokemonId: $pokemonId) {\n        id\n        name\n        pokemons{\n            id\n            pokemonId\n            name\n        }\n    }\n}\n"): (typeof documents)["\n  mutation AddPokemonToTeamById($pokemonId: Int!) {\n    addPokemonToTeamById(pokemonId: $pokemonId) {\n        id\n        name\n        pokemons{\n            id\n            pokemonId\n            name\n        }\n    }\n}\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation AddPokemonToTeamByName($pokemonName: String!) {\n    addPokemonToTeamByName(pokemonName: $pokemonName) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n"): (typeof documents)["\n  mutation AddPokemonToTeamByName($pokemonName: String!) {\n    addPokemonToTeamByName(pokemonName: $pokemonName) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n"];
+export function graphql(source: "\n  mutation AddPokemonToTeamByName($pokemonName: String!) {\n    addPokemonToTeamByName(pokemonName: $pokemonName) {\n        id\n        name\n        pokemons{\n            id\n            pokemonId\n            name\n        }\n    }\n}\n"): (typeof documents)["\n  mutation AddPokemonToTeamByName($pokemonName: String!) {\n    addPokemonToTeamByName(pokemonName: $pokemonName) {\n        id\n        name\n        pokemons{\n            id\n            pokemonId\n            name\n        }\n    }\n}\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation RemovePokemonFromTeam($pokemonId: Int!) {\n    removePokemonFromTeam(pokemonId: $pokemonId) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n"): (typeof documents)["\n  mutation RemovePokemonFromTeam($pokemonId: Int!) {\n    removePokemonFromTeam(pokemonId: $pokemonId) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n"];
+export function graphql(source: "\n  mutation RemovePokemonFromTeamById($id: ID!) {\n    removePokemonFromTeamById(id: $id) {\n        id\n        name\n        pokemons{\n            id\n            pokemonId\n            name\n        }\n    }\n}\n"): (typeof documents)["\n  mutation RemovePokemonFromTeamById($id: ID!) {\n    removePokemonFromTeamById(id: $id) {\n        id\n        name\n        pokemons{\n            id\n            pokemonId\n            name\n        }\n    }\n}\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation RemovePokemonFromTeamByName($pokemonName: String!) {\n    removePokemonFromTeamByName(pokemonName: $pokemonName) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n"): (typeof documents)["\n  mutation RemovePokemonFromTeamByName($pokemonName: String!) {\n    removePokemonFromTeamByName(pokemonName: $pokemonName) {\n        id\n        name\n        pokemons{\n            id\n            name\n        }\n    }\n}\n"];
+export function graphql(source: "\n  mutation movePokemons($positions: [PokemonPositionInput!]!) {\n    movePokemons(positions: $positions) {\n      id\n      name\n      pokemons {\n        id\n        name\n        position\n      }\n    }\n}\n"): (typeof documents)["\n  mutation movePokemons($positions: [PokemonPositionInput!]!) {\n    movePokemons(positions: $positions) {\n      id\n      name\n      pokemons {\n        id\n        name\n        position\n      }\n    }\n}\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -79,7 +79,7 @@ export function graphql(source: "\n  query FindTeamById($id: ID!) {\n    findTea
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          name\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          name\n        }\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          pokemonId\n          name\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          pokemonId\n          name\n        }\n      }\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
