@@ -118,7 +118,7 @@ export default function TeamModal({ name, pokemons, open, onClose, onSaved }: Pr
             if (draft.length > 0) {
                 await movePokemons({
                     variables: {
-                        positions: draft.map((p, index) => ({ pokemonId: p.pokemonId, position: index })),
+                        positions: draft.map((p, index) => ({ id: p.id, position: index })),
                     },
                 })
             }
