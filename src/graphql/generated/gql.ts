@@ -16,16 +16,20 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 type Documents = {
     "\n  mutation CreateTeam($name: String!) {\n    createTeam(name: $name) {\n      id\n      name\n    }\n  }\n": typeof types.CreateTeamDocument,
     "\n  mutation SyncPokemons($pokemons: [PokemonSyncInput]!) {\n  syncPokemons(pokemons: $pokemons) {\n    id\n    name\n    pokemons {\n      id\n      pokemonId\n      pokemonName\n      nickname\n      position\n    }\n  }\n}\n": typeof types.SyncPokemonsDocument,
+    "\n  mutation DeleteMyTrainer {\n    deleteMyTrainer\n  }\n": typeof types.DeleteMyTrainerDocument,
     "\n  query FindAllTeams {\n    findAllTeams {\n      id\n      name\n      trainer {\n        id\n        name\n      }\n      pokemons {\n        id\n        pokemonId\n        pokemonName\n      }\n    }\n  }\n": typeof types.FindAllTeamsDocument,
     "\n  query FindTeamById($id: ID!) {\n    findTeamById(id: $id) {\n      id\n      name\n      trainer {\n        id\n        name\n      }\n      pokemons {\n        id\n        pokemonId\n        pokemonName\n      }\n    }\n  }\n": typeof types.FindTeamByIdDocument,
     "\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          pokemonId\n          pokemonName\n          nickname\n          position\n        }\n      }\n    }\n  }\n": typeof types.MeDocument,
+    "\n  query FindTrainerByName($name: String!) {\n    findTrainerByName(name: $name) {\n      id\n      name\n      email\n    }\n  }\n": typeof types.FindTrainerByNameDocument,
 };
 const documents: Documents = {
     "\n  mutation CreateTeam($name: String!) {\n    createTeam(name: $name) {\n      id\n      name\n    }\n  }\n": types.CreateTeamDocument,
     "\n  mutation SyncPokemons($pokemons: [PokemonSyncInput]!) {\n  syncPokemons(pokemons: $pokemons) {\n    id\n    name\n    pokemons {\n      id\n      pokemonId\n      pokemonName\n      nickname\n      position\n    }\n  }\n}\n": types.SyncPokemonsDocument,
+    "\n  mutation DeleteMyTrainer {\n    deleteMyTrainer\n  }\n": types.DeleteMyTrainerDocument,
     "\n  query FindAllTeams {\n    findAllTeams {\n      id\n      name\n      trainer {\n        id\n        name\n      }\n      pokemons {\n        id\n        pokemonId\n        pokemonName\n      }\n    }\n  }\n": types.FindAllTeamsDocument,
     "\n  query FindTeamById($id: ID!) {\n    findTeamById(id: $id) {\n      id\n      name\n      trainer {\n        id\n        name\n      }\n      pokemons {\n        id\n        pokemonId\n        pokemonName\n      }\n    }\n  }\n": types.FindTeamByIdDocument,
     "\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          pokemonId\n          pokemonName\n          nickname\n          position\n        }\n      }\n    }\n  }\n": types.MeDocument,
+    "\n  query FindTrainerByName($name: String!) {\n    findTrainerByName(name: $name) {\n      id\n      name\n      email\n    }\n  }\n": types.FindTrainerByNameDocument,
 };
 
 /**
@@ -53,6 +57,10 @@ export function graphql(source: "\n  mutation SyncPokemons($pokemons: [PokemonSy
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  mutation DeleteMyTrainer {\n    deleteMyTrainer\n  }\n"): (typeof documents)["\n  mutation DeleteMyTrainer {\n    deleteMyTrainer\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  query FindAllTeams {\n    findAllTeams {\n      id\n      name\n      trainer {\n        id\n        name\n      }\n      pokemons {\n        id\n        pokemonId\n        pokemonName\n      }\n    }\n  }\n"): (typeof documents)["\n  query FindAllTeams {\n    findAllTeams {\n      id\n      name\n      trainer {\n        id\n        name\n      }\n      pokemons {\n        id\n        pokemonId\n        pokemonName\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -62,6 +70,10 @@ export function graphql(source: "\n  query FindTeamById($id: ID!) {\n    findTea
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          pokemonId\n          pokemonName\n          nickname\n          position\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          pokemonId\n          pokemonName\n          nickname\n          position\n        }\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query FindTrainerByName($name: String!) {\n    findTrainerByName(name: $name) {\n      id\n      name\n      email\n    }\n  }\n"): (typeof documents)["\n  query FindTrainerByName($name: String!) {\n    findTrainerByName(name: $name) {\n      id\n      name\n      email\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
