@@ -9,7 +9,8 @@ interface Pokemon {
     pokemonId: number
     pokemonName: string
 
-    nickname: string
+    nickname: string | null
+    position: number
 }
 
 interface Props {

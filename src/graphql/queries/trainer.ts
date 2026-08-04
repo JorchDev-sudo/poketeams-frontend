@@ -20,3 +20,13 @@ export const Me = graphql(`
     }
   }
 `)
+
+export const FindTrainerByName = graphql(`
+  query FindTrainerByName($name: String!) {
+    findTrainerByName(name: $name) {
+      id
+      name
+      email
+    }
+  }
+`)

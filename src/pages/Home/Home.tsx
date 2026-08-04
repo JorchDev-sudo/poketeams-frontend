@@ -5,6 +5,7 @@ import CreateTeamModal from '@/pages/Home/components/CreateTeamModal/CreateTeamM
 import TeamCard from '@/pages/Home/components/TeamCard/TeamCard'
 import TeamModal from './components/TeamModal/TeamModal'
 import { Button } from '@/components/ui/button'
+import Navbar from '@/components/layout/Navbar/Navbar'
 
 export default function HomePage() {
   const [isOpen, setIsOpen] = useState(false)
@@ -36,6 +37,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-svh bg-background">
+      <Navbar />
+
       <div className="mx-auto flex max-w-2xl flex-col gap-8 px-4 py-12">
         <div className="flex flex-col gap-1">
           <span className="font-mono text-xs font-medium uppercase tracking-widest text-muted-foreground">
