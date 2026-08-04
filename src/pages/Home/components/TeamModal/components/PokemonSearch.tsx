@@ -3,7 +3,7 @@ import { useDebounce } from 'use-debounce'
 import { getPokemons } from "@/lib/api"
 
 interface Props {
-    onAddPokemon: (pokemonName: string, pokemonId: number) => void
+    onAddPokemon: (pokemonName: string, nickname: string, pokemonId: number) => void
 }
 
 interface PokemonSuggestion {
@@ -37,7 +37,7 @@ export default function PokemonsSearch({ onAddPokemon }: Props) {
                 {results.map(pokemon => (
                     <div key={pokemon.name}>
                         {pokemon.name}
-                        <button onClick={() => onAddPokemon(pokemon.name, pokemon.pokemonId)}>+</button>
+                        <button onClick={() => onAddPokemon(pokemon.name, "", pokemon.pokemonId)}>+</button>
                     </div>
                 ))}
             </div>

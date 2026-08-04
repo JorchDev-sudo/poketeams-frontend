@@ -9,58 +9,18 @@ export const CREATE_TEAM = graphql(`
   }
 `)
 
-export const ADD_POKEMON_TO_TEAM_BY_ID = graphql(`
-  mutation AddPokemonToTeamById($pokemonId: Int!) {
-    addPokemonToTeamById(pokemonId: $pokemonId) {
-        id
-        name
-        pokemons{
-            id
-            pokemonId
-            name
-        }
-    }
-}
-`)
-
-export const ADD_POKEMON_TO_TEAM_BY_NAME = graphql(`
-  mutation AddPokemonToTeamByName($pokemonName: String!) {
-    addPokemonToTeamByName(pokemonName: $pokemonName) {
-        id
-        name
-        pokemons{
-            id
-            pokemonId
-            name
-        }
-    }
-}
-`)
-
-export const REMOVE_POKEMON_FROM_TEAM_BY_ID = graphql(`
-  mutation RemovePokemonFromTeamById($id: ID!) {
-    removePokemonFromTeamById(id: $id) {
-        id
-        name
-        pokemons{
-            id
-            pokemonId
-            name
-        }
-    }
-}
-`)
-
-export const MOVE_POKEMONS = graphql(`
-  mutation movePokemons($positions: [PokemonPositionInput!]!) {
-    movePokemons(positions: $positions) {
+export const SYNC_POKEMONS = graphql(`
+  mutation SyncPokemons($pokemons: [PokemonSyncInput]!) {
+  syncPokemons(pokemons: $pokemons) {
+    id
+    name
+    pokemons {
       id
-      name
-      pokemons {
-        id
-        name
-        position
-      }
+      pokemonId
+      pokemonName
+      nickname
+      position
     }
+  }
 }
 `)

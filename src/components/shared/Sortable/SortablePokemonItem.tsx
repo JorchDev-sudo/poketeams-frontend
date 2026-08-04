@@ -4,12 +4,21 @@ import { GripVertical } from 'lucide-react'
 
 interface Props {
     id: string
-    name: string
+    pokemonName: string
+    nickname: string | null
     isNew: boolean
     onRemove: (id: string) => void
+    onNicknameChange: (id: string, nickname: string) => void
 }
 
-export function SortablePokemonItem({ id, name, isNew, onRemove }: Props) {
+export function SortablePokemonItem({
+    id,
+    pokemonName,
+    nickname,
+    isNew,
+    onRemove,
+    onNicknameChange,
+}: Props) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
 
     const style = {
@@ -28,9 +37,17 @@ export function SortablePokemonItem({ id, name, isNew, onRemove }: Props) {
             >
                 <GripVertical size={16} />
             </button>
-            <span className="flex-1">
-                {name} {isNew && <em>(nuevo)</em>}
-            </span>
+
+            <input
+                type="text"
+                value={nickname ?? ''}
+                placeholder={pokemonName}
+                onChange={(e) => onNicknameChange(id, e.target.value)}
+                className="flex-1 bg-transparent outline-none border-b border-transparent focus:border-border"
+            />
+
+            {isNew && <em className="text-xs text-muted-foreground">(nuevo)</em>}
+
             <button type="button" onClick={() => onRemove(id)}>-</button>
         </li>
     )

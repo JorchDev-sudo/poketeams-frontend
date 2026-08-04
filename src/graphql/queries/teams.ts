@@ -1,4 +1,4 @@
-import {graphql} from '../generated/gql'
+import { graphql } from '../generated/gql'
 
 
 export const FIND_ALL_TEAMS = graphql(`
@@ -12,7 +12,8 @@ export const FIND_ALL_TEAMS = graphql(`
       }
       pokemons {
         id
-        name
+        pokemonId
+        pokemonName
       }
     }
   }
@@ -29,7 +30,8 @@ export const FIND_TEAM_BY_ID = graphql(`
       }
       pokemons {
         id
-        name
+        pokemonId
+        pokemonName
       }
     }
   }

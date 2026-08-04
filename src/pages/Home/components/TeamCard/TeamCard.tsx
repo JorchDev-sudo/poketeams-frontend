@@ -5,8 +5,11 @@ const MAX_ROSTER_SIZE = 6
 
 interface Pokemon {
     id: string
+
     pokemonId: number
-    name: string
+    pokemonName: string
+
+    nickname: string
 }
 
 interface Props {
@@ -55,7 +58,7 @@ export default function TeamCard({ name, pokemons, onClick }: Props) {
                             key={pokemon.id}
                             className="truncate rounded-lg border border-border bg-muted px-3 py-1.5 text-sm capitalize text-foreground"
                         >
-                            {pokemon.name}
+                            {pokemon.nickname ?? pokemon.pokemonName}
                         </li>
                     ))}
                     {Array.from({ length: emptySlots }).map((_, index) => (

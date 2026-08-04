@@ -1,9 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import {
-    REMOVE_POKEMON_FROM_TEAM_BY_ID,
-    ADD_POKEMON_TO_TEAM_BY_NAME,
-    MOVE_POKEMONS
-} from '@/graphql/mutations/team';
+import { SYNC_POKEMONS } from '@/graphql/mutations/team';
 import { useMutation } from '@apollo/client/react';
 import { useEffect, useReducer, useState } from 'react';
 import {
@@ -22,7 +18,9 @@ import PokemonsSearch from './components/PokemonSearch';
 interface Pokemon {
     id: string;
     pokemonId: number;
-    name: string;
+    pokemonName: string;
+    nickname: string | null;
+    position: number;
 }
 
 interface Props {
@@ -36,22 +34,36 @@ interface Props {
 interface DraftPokemon {
     id: string
     pokemonId: number
-    name: string
+    pokemonName: string
+    nickname: string | null
     isNew: boolean
 }
 
 type DraftAction =
     | { type: 'RESET'; pokemons: Pokemon[] }
-    | { type: 'ADD'; name: string, pokemonId: number }
+    | { type: 'ADD'; pokemonId: number; pokemonName: string; nickname: string }
     | { type: 'REMOVE'; id: string }
     | { type: 'REORDER'; activeId: string; overId: string }
+    | { type: 'RENAME'; id: string; nickname: string }
 
 function draftReducer(state: DraftPokemon[], action: DraftAction): DraftPokemon[] {
     switch (action.type) {
         case 'RESET':
-            return action.pokemons.map(p => ({ id: p.id, pokemonId: p.pokemonId, name: p.name, isNew: false }))
+            return action.pokemons.map(p => ({
+                id: p.id,
+                pokemonId: p.pokemonId,
+                pokemonName: p.pokemonName,
+                nickname: p.nickname,
+                isNew: false,
+            }))
         case 'ADD':
-            return [...state, { id: `temp:${crypto.randomUUID()}`, pokemonId: action.pokemonId, name: action.name, isNew: true }]
+            return [...state, {
+                id: `temp:${crypto.randomUUID()}`,
+                pokemonId: action.pokemonId,
+                pokemonName: action.pokemonName,
+                nickname: action.nickname,
+                isNew: true,
+            }]
         case 'REMOVE':
             return state.filter(p => p.id !== action.id)
         case 'REORDER': {
@@ -60,13 +72,15 @@ function draftReducer(state: DraftPokemon[], action: DraftAction): DraftPokemon[
             if (oldIndex === -1 || newIndex === -1) return state
             return arrayMove(state, oldIndex, newIndex)
         }
+        case 'RENAME':
+            return state.map(p =>
+                p.id === action.id ? { ...p, nickname: action.nickname } : p
+            )
     }
 }
 
 export default function TeamModal({ name, pokemons, open, onClose, onSaved }: Props) {
-    const [removePokemonFromTeamById] = useMutation(REMOVE_POKEMON_FROM_TEAM_BY_ID)
-    const [addPokemonToTeamByName] = useMutation(ADD_POKEMON_TO_TEAM_BY_NAME)
-    const [movePokemons] = useMutation(MOVE_POKEMONS)
+    const [syncPokemons] = useMutation(SYNC_POKEMONS)
 
     const [draft, dispatch] = useReducer(draftReducer, [])
 
@@ -84,13 +98,17 @@ export default function TeamModal({ name, pokemons, open, onClose, onSaved }: Pr
         }
     }, [open, pokemons])
 
-    const handleAddPokemon = (pokemonName: string, pokemonId: number) => {
-        dispatch({ type: 'ADD', name: pokemonName, pokemonId: pokemonId })
+    const handleAddPokemon = (pokemonName: string, nickname: string, pokemonId: number) => {
+        dispatch({ type: 'ADD', pokemonId, pokemonName, nickname })
         setIsSearchOpen(false)
     }
 
     const handleRemovePokemon = (id: string) => {
         dispatch({ type: 'REMOVE', id })
+    }
+
+    const handleNicknameChange = (id: string, nickname: string) => {
+        dispatch({ type: 'RENAME', id, nickname })
     }
 
     const handleDragEnd = (event: DragEndEvent) => {
@@ -103,25 +121,20 @@ export default function TeamModal({ name, pokemons, open, onClose, onSaved }: Pr
     const handleSave = async () => {
         setIsSaving(true)
         try {
-            const original = pokemons.filter((p): p is Pokemon => p !== null)
-
-            const toRemove = original.filter(o => !draft.some(d => d.id === o.id))
-            const toAdd = draft.filter(d => d.isNew)
-
-            for (const p of toRemove) {
-                await removePokemonFromTeamById({ variables: { id: p.id } })
-            }
-            for (const p of toAdd) {
-                await addPokemonToTeamByName({ variables: { pokemonName: p.name } })
-            }
-
-            if (draft.length > 0) {
-                await movePokemons({
-                    variables: {
-                        positions: draft.map((p, index) => ({ id: p.id, position: index })),
-                    },
-                })
-            }
+            await syncPokemons({
+                variables: {
+                    pokemons: draft.map((pokemon, index) => ({
+                        id: pokemon.isNew ? null : pokemon.id,
+                        pokemonId: pokemon.pokemonId,
+                        pokemonName: pokemon.pokemonName,
+                        // Si el usuario borró el input y lo dejó vacío, mandamos null
+                        // en vez de "" — así el backend aplica su propia regla de
+                        // "sin nickname = usar el nombre de la especie".
+                        nickname: pokemon.nickname?.trim() ? pokemon.nickname : null,
+                        position: index,
+                    })),
+                },
+            })
 
             await onSaved()
             onClose()
@@ -146,9 +159,11 @@ export default function TeamModal({ name, pokemons, open, onClose, onSaved }: Pr
                                 <SortablePokemonItem
                                     key={pokemon.id}
                                     id={pokemon.id}
-                                    name={pokemon.name}
+                                    pokemonName={pokemon.pokemonName}
+                                    nickname={pokemon.nickname}
                                     isNew={pokemon.isNew}
                                     onRemove={handleRemovePokemon}
+                                    onNicknameChange={handleNicknameChange}
                                 />
                             ))}
                         </ol>
@@ -156,7 +171,8 @@ export default function TeamModal({ name, pokemons, open, onClose, onSaved }: Pr
                 </DndContext>
 
                 <button onClick={() => setIsSearchOpen(true)} disabled={isSearchOpen}>
-                    {isSearchOpen ? "" : "+"}</button>
+                    {isSearchOpen ? "" : "+"}
+                </button>
                 <button onClick={handleSave} disabled={isSaving}>
                     {isSaving ? 'Guardando...' : 'Save'}
                 </button>
