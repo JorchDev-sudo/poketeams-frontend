@@ -1,29 +1,35 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useLazyQuery, useMutation, useApolloClient } from '@apollo/client/react'
+import { useLazyQuery } from '@apollo/client/react'
+import { Menu, LogOut } from 'lucide-react'
 import { FindTrainerByName } from '@/graphql/queries/trainer'
 import { FIND_ALL_TEAMS } from '@/graphql/queries/teams'
-import { DeleteMyTrainer } from '@/graphql/mutations/trainer'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/button'
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui/sheet'
 
 type SearchMode = 'trainer' | 'team'
 
 export default function Navbar() {
     const navigate = useNavigate()
-    const apolloClient = useApolloClient()
     const { logout } = useAuth()
 
     const [mode, setMode] = useState<SearchMode>('trainer')
     const [term, setTerm] = useState('')
+    const [menuOpen, setMenuOpen] = useState(false)
 
     const [searchTrainer, { data: trainerData, loading: trainerLoading }] = useLazyQuery(FindTrainerByName)
     const [findAllTeams, { data: teamsData, loading: teamsLoading }] = useLazyQuery(FIND_ALL_TEAMS)
 
-    const [deleteMyTrainer, { loading: deleting }] = useMutation(DeleteMyTrainer)
-
-    const handleSearch = (e: FormEvent) => {
+    const handleSearch = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+
         if (!term.trim()) return
 
         if (mode === 'trainer') {
@@ -38,25 +44,9 @@ export default function Navbar() {
     )
 
     const handleLogout = () => {
+        setMenuOpen(false)
         logout()
         navigate('/login')
-    }
-
-    const handleDeleteAccount = async () => {
-        const confirmed = window.confirm(
-            'Esta acción es permanente y eliminará tu cuenta y tu equipo. ¿Querés continuar?'
-        )
-        if (!confirmed) return
-
-        try {
-            await deleteMyTrainer()
-            await apolloClient.clearStore()
-            logout()
-            navigate('/login')
-        } catch (e) {
-            console.error(e)
-            alert('No se pudo eliminar la cuenta. Intentá de nuevo.')
-        }
     }
 
     const showResults = term.trim().length > 0 && (trainerData || teamsData || trainerLoading || teamsLoading)
@@ -86,14 +76,30 @@ export default function Navbar() {
                     <Button type="submit" size="sm">Buscar</Button>
                 </form>
 
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={handleLogout}>
-                        Cerrar sesión
-                    </Button>
-                    <Button variant="destructive" size="sm" onClick={handleDeleteAccount} disabled={deleting}>
-                        {deleting ? 'Eliminando...' : 'Eliminar cuenta'}
-                    </Button>
-                </div>
+                <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+                    <SheetTrigger asChild>
+                        <Button variant="ghost" size="icon" aria-label="Abrir menú">
+                            <Menu className="h-5 w-5" />
+                        </Button>
+                    </SheetTrigger>
+
+                    <SheetContent side="right">
+                        <SheetHeader>
+                            <SheetTitle>Menú</SheetTitle>
+                        </SheetHeader>
+
+                        <div className="mt-6 flex flex-col gap-2">
+                            <Button
+                                variant="outline"
+                                className="justify-start gap-2"
+                                onClick={handleLogout}
+                            >
+                                <LogOut className="h-4 w-4" />
+                                Cerrar sesión
+                            </Button>
+                        </div>
+                    </SheetContent>
+                </Sheet>
             </nav>
 
             {showResults && (

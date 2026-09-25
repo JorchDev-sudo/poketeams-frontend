@@ -1,12 +1,12 @@
-import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom'
-import {useAuth} from '../context/AuthContext'
-import {RegisterPage} from '../pages/Auth/RegisterPage'
-import {LoginPage} from '../pages/Auth/LoginPage'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import { RegisterPage } from '../pages/Auth/RegisterPage'
+import { LoginPage } from '../pages/Auth/LoginPage'
 import HomePage from '../pages/Home/Home'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const { isAuthenticated } = useAuth()
-
+    console.log('ProtectedRoute isAuthenticated:', isAuthenticated)
     return isAuthenticated ? children : <Navigate to="/login" />
 }
 
