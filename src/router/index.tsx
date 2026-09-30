@@ -1,7 +1,5 @@
-import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom'
-import {useAuth} from '../context/AuthContext'
-import {RegisterPage} from '../pages/Auth/RegisterPage'
-import {LoginPage} from '../pages/Auth/LoginPage'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import HomePage from '../pages/Home/Home'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -10,14 +8,23 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return isAuthenticated ? children : <Navigate to="/login" />
 }
 
+function LoginButton() {
+    const { login } = useAuth();
+    return <button onClick={login}>Iniciar sesión con Auth0</button>;
+}
+
 export function AppRouter() {
     return (
         <BrowserRouter>
             <Routes>
                 {/* Rutas públicas */}
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/dashboard" element={<div>Dashboard Page</div>} />
+                <Route path="/dashboard" element={
+                    <div>
+                        <h1>Dashboard Page</h1>
+                        {LoginButton()}
+                    </div>
+
+                } />
 
                 {/* Rutas protegidas */}
                 <Route path="/" element={

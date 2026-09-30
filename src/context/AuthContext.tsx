@@ -1,50 +1,63 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { setLogoutCallback } from '@/lib/apollo'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-type jwtToken = string | null
+const apiBaseUrl = import.meta.env.VITE_API_GRAPHQL_URL;
+const AuthContext = createContext<any>(null);
 
-interface AuthContextType {
-    isAuthenticated: boolean
-    token: jwtToken
-    login: (token: string) => void
-    logout: () => void
-}
-
-const AuthContext = createContext<AuthContextType | null>(null);
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [token, setToken] = useState<jwtToken>(
-        localStorage.getItem('token')
-    )
-
-    const login = (newToken: string) => {
-        localStorage.setItem('token', newToken)
-        setToken(newToken)
-    }
-
-    const logout = () => {
-        localStorage.removeItem('token')
-        setToken(null)
-    }
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
-        setLogoutCallback(logout)
-    }, [])
+        const checkSession = async () => {
+            try {
+                const response = await fetch(`${apiBaseUrl}/auth/me`, {
+                    credentials: 'include',
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setUser(data);
+                    setIsAuthenticated(true);
+                } else {
+                    setIsAuthenticated(false);
+                }
+            } catch (error) {
+                console.error('Error checking session', error);
+                setIsAuthenticated(false);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        checkSession();
+    }, []);
+
+    const login = () => {
+        window.location.href = `${apiBaseUrl}/auth/login`;
+    };
+
+    const logout = async () => {
+        try {
+            await fetch(`${apiBaseUrl}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+        } catch (error) {
+            console.error('Error during logout', error);
+        } finally {
+            setUser(null);
+            setIsAuthenticated(false);
+
+            window.location.href = '/';
+        }
+    };
 
     return (
-        <AuthContext.Provider value={{
-            isAuthenticated: !!token,
-            token,
-            login,
-            logout
-        }}> {children} </AuthContext.Provider>
-    )
-}
+        <AuthContext.Provider value={{ user, login, logout, loading, isAuthenticated }}>
+            {!loading && children}
+        </AuthContext.Provider>
+    );
+};
 
-export function useAuth() {
-    const context = useContext(AuthContext)
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider')
-    }
-    return context
-}
+export const useAuth = () => useContext(AuthContext);
