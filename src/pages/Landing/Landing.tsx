@@ -29,11 +29,11 @@ const darkTheme = {
 
 // ej para probar el buscador
 const teams: string[] = [
-  'A',
-  'B',
-  'C',
-  'D',
-  'E',
+  ' ',
+  ' ',
+  ' ',
+  ' ',
+  ' ',
 ]
 
 // animacion de aparicion (cada equipo)
