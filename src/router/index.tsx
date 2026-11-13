@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext'
 import { RegisterPage } from '../pages/Auth/RegisterPage'
 import { LoginPage } from '../pages/Auth/LoginPage'
 import HomePage from '../pages/Home/Home'
+import LandingPage from '../pages/Landing/Landing'// LM
+
 import ChatPage from '@/features/chat/ChatPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -10,6 +12,14 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     console.log('ProtectedRoute isAuthenticated:', isAuthenticated)
     return isAuthenticated ? children : <Navigate to="/login" />
 }
+
+// LM
+function RootRoute() {
+  const { isAuthenticated } = useAuth()
+  return isAuthenticated ? <HomePage /> : <LandingPage />
+}
+// LM
+
 
 export function AppRouter() {
     return (
@@ -19,6 +29,13 @@ export function AppRouter() {
                 <Route path="/dashboard" element={<div><h1>Dashboard Page</h1>{LoginButton()}</div>} />
 
                 {/* Rutas protegidas */}
+               <Route path="/" element={<RootRoute />} />
+
+                <Route path="/teams" element={
+                    <ProtectedRoute>
+                        <div>Teams Page</div>
+                    </ProtectedRoute>
+                } />
                 <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
                 <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
                 <Route path="/chat/:conversationId" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
