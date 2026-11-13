@@ -1,63 +1,66 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
+import { getCookie } from '@/lib/csrf'
+import { client, setLogoutCallback } from '@/lib/apollo'
+import { chatClient } from '@/features/chat/lib/chatClient'
 
-const apiBaseUrl = import.meta.env.VITE_API_GRAPHQL_URL;
-const AuthContext = createContext<any>(null);
+const apiBaseUrl = import.meta.env.VITE_API_GRAPHQL_URL
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+interface AuthUser { id: string; name: string; email: string }
+interface AuthContextValue {
+    user: AuthUser | null
+    isAuthenticated: boolean
+    loading: boolean
+    login: () => void
+    logout: () => Promise<void>
+}
+
+const AuthContext = createContext<AuthContextValue | null>(null)
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+    const [user, setUser] = useState<AuthUser | null>(null)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const checkSession = async () => {
-            try {
-                const response = await fetch(`${apiBaseUrl}/auth/me`, {
-                    credentials: 'include',
-                });
+        fetch(`${apiBaseUrl}/auth/me`, { credentials: 'include' })
+            .then(res => (res.ok ? res.json() : null))
+            .then(setUser)
+            .catch(() => setUser(null))
+            .finally(() => setLoading(false))
+    }, [])
 
-                if (response.ok) {
-                    const data = await response.json();
-                    setUser(data);
-                    setIsAuthenticated(true);
-                } else {
-                    setIsAuthenticated(false);
-                }
-            } catch (error) {
-                console.error('Error checking session', error);
-                setIsAuthenticated(false);
-            } finally {
-                setLoading(false);
-            }
-        };
+    useEffect(() => {
+        setLogoutCallback(() => {
+            setUser(null)
+            void client.clearStore()
+            void chatClient.clearStore()
+        })
+    }, [])
 
-        checkSession();
-    }, []);
+    const login = useCallback(() => { window.location.href = `${apiBaseUrl}/auth/login` }, [])
 
-    const login = () => {
-        window.location.href = `${apiBaseUrl}/auth/login`;
-    };
-
-    const logout = async () => {
+    const logout = useCallback(async () => {
         try {
             await fetch(`${apiBaseUrl}/auth/logout`, {
                 method: 'POST',
                 credentials: 'include',
-            });
-        } catch (error) {
-            console.error('Error during logout', error);
+                headers: { 'X-XSRF-TOKEN': getCookie('XSRF-TOKEN') ?? '' },
+            })
+        } catch (e) {
+            console.error('Error during logout', e)
         } finally {
-            setUser(null);
-            setIsAuthenticated(false);
-
-            window.location.href = '/';
+            window.location.href = '/'
         }
-    };
+    }, [])
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading, isAuthenticated }}>
+        <AuthContext.Provider value={{ user, isAuthenticated: user !== null, loading, login, logout }}>
             {!loading && children}
         </AuthContext.Provider>
-    );
-};
+    )
+}
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+    const ctx = useContext(AuthContext)
+    if (!ctx) throw new Error('useAuth must be used inside AuthProvider')
+    return ctx
+}

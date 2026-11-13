@@ -1,23 +1,23 @@
 import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useLazyQuery, useMutation, useApolloClient } from '@apollo/client/react'
+import { Link } from 'react-router-dom'
+import { useLazyQuery, useMutation } from '@apollo/client/react'
 import { FindTrainerByName } from '@/graphql/queries/trainer'
 import { FIND_ALL_TEAMS } from '@/graphql/queries/teams'
 import { DeleteMyTrainer } from '@/graphql/mutations/trainer'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/button'
+import { SEARCH_TRAINERS } from '@/graphql/queries/trainer'
+
 
 type SearchMode = 'trainer' | 'team'
 
 export default function Navbar() {
-    const navigate = useNavigate()
-    const apolloClient = useApolloClient()
     const { logout } = useAuth()
 
     const [mode, setMode] = useState<SearchMode>('trainer')
     const [term, setTerm] = useState('')
 
-    const [searchTrainer, { data: trainerData, loading: trainerLoading }] = useLazyQuery(FindTrainerByName)
+    const [searchTrainer, { data: trainerData, loading: trainerLoading }] = useLazyQuery(SEARCH_TRAINERS)
     const [findAllTeams, { data: teamsData, loading: teamsLoading }] = useLazyQuery(FIND_ALL_TEAMS)
 
     const [deleteMyTrainer, { loading: deleting }] = useMutation(DeleteMyTrainer)
@@ -37,10 +37,7 @@ export default function Navbar() {
         t.name.toLowerCase().includes(term.trim().toLowerCase())
     )
 
-    const handleLogout = () => {
-        logout()
-        navigate('/login')
-    }
+    const handleLogout = () => { void logout() }
 
     const handleDeleteAccount = async () => {
         const confirmed = window.confirm(
@@ -50,9 +47,7 @@ export default function Navbar() {
 
         try {
             await deleteMyTrainer()
-            await apolloClient.clearStore()
-            logout()
-            navigate('/login')
+            await logout()          // cierra la sesión en el servidor y recarga la página
         } catch (e) {
             console.error(e)
             alert('No se pudo eliminar la cuenta. Intentá de nuevo.')
@@ -64,7 +59,10 @@ export default function Navbar() {
     return (
         <div className="border-b border-border bg-card">
             <nav className="flex items-center justify-between gap-4 px-4 py-3">
-                <span className="font-heading text-lg font-semibold text-foreground">PokeTeams</span>
+                <div className="flex items-center gap-4">
+                    <Link to="/" className="font-heading text-lg font-semibold text-foreground">PokeTeams</Link>
+                    <Link to="/chat" className="text-sm text-muted-foreground hover:text-foreground">Chat</Link>
+                </div>
 
                 <form onSubmit={handleSearch} className="flex flex-1 max-w-md items-center gap-2">
                     <select
@@ -103,13 +101,14 @@ export default function Navbar() {
                     )}
 
                     {mode === 'trainer' && trainerData && (
-                        trainerData.findTrainerByName ? (
-                            <div>
-                                <p className="text-sm font-medium">{trainerData.findTrainerByName.name}</p>
-                                <p className="text-xs text-muted-foreground">{trainerData.findTrainerByName.email}</p>
-                            </div>
-                        ) : (
+                        trainerData.searchTrainers.length === 0 ? (
                             <p className="text-xs text-muted-foreground">Sin resultados</p>
+                        ) : (
+                            <ul className="flex flex-col gap-1">
+                                {trainerData.searchTrainers.map(t => (
+                                    <li key={t.id} className="text-sm">{t.name}</li>
+                                ))}
+                            </ul>
                         )
                     )}
 

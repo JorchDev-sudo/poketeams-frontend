@@ -30,3 +30,10 @@ export const FindTrainerByName = graphql(`
     }
   }
 `)
+
+export const SEARCH_TRAINERS = graphql(`
+  query SearchTrainers($name: String!) { searchTrainers(name: $name) { id name } }
+`)
+export const FIND_TRAINERS_BY_IDS = graphql(`
+  query FindTrainersByIds($ids: [ID!]!) { findTrainersByIds(ids: $ids) { id name } }
+`)
