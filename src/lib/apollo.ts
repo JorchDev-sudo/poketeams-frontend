@@ -1,5 +1,4 @@
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/client'
-import { SetContextLink } from '@apollo/client/link/context'
 import { ErrorLink } from '@apollo/client/link/error'
 import {
   CombinedGraphQLErrors,
@@ -7,13 +6,10 @@ import {
   ServerError,
 } from "@apollo/client/errors";
 
-const apiUrl = import.meta.env.VITE_API_GRAPHQL_URL;
-
-const httpLink = new HttpLink({
-  uri: `${apiUrl}/graphql`
-})
+export const apiUrl: string = import.meta.env.VITE_API_GRAPHQL_URL
 
 let logoutCallback: (() => void) | null = null
+export const setLogoutCallback = (cb: () => void) => { logoutCallback = cb }
 
 export const setLogoutCallback = (cb: () => void) => {
   logoutCallback = cb
@@ -52,33 +48,25 @@ const errorLink = new ErrorLink(({ error, operation }) => {
   } else {
     console.error(`[Network error]: ${error}`);
   }
-});
-
-const authLink = new SetContextLink((prevContext) => {
-  const token = localStorage.getItem('token')
-
-  return {
-    ...prevContext,
-    headers: {
-      ...prevContext.headers,
-      authorization: token ? `Bearer ${token}` : '',
-    }
-  }
 })
 
+export const csrfLink = new ApolloLink((operation, forward) => {
+  const token = getCookie('XSRF-TOKEN')
+  if (token) {
+    operation.setContext(({ headers = {} }: { headers?: Record<string, string> }) => ({
+      headers: { ...headers, 'X-XSRF-TOKEN': token },
+    }))
+  }
+  return forward(operation)
+})
+
+const httpLink = new HttpLink({ uri: `${apiUrl}/graphql`, credentials: 'include' })
+
 export const client = new ApolloClient({
-  link: ApolloLink.from([errorLink, authLink, httpLink]),
+  link: ApolloLink.from([errorLink, csrfLink, httpLink]),
   cache: new InMemoryCache({
     typePolicies: {
-      Team: {
-        fields: {
-          pokemons: {
-            merge(_, incoming) {
-              return incoming
-            }
-          }
-        }
-      }
-    }
+      Team: { fields: { pokemons: { merge: (_, incoming) => incoming } } },
+    },
   }),
 })

@@ -1,0 +1,27 @@
+scalar DateTime
+
+type Conversation {
+    id: ID!
+    ownerId: ID!
+    participantIds: [ID!]!
+    createdAt: DateTime!
+}
+type Message {
+    id: ID!
+    conversationId: ID!
+    senderId: ID!
+    content: String!
+    sentAt: DateTime!
+}
+
+type Query {
+    findMessages(conversationId: ID!, limit: Int, before: DateTime): [Message!]!
+    findConversations: [Conversation!]!
+}
+type Mutation {
+    startConversation(participantIds: [ID!]!): Conversation!
+    sendMessage(conversationId: ID!, content: String!): Message!
+}
+type Subscription {
+    messageAdded(conversationId: ID!): Message!
+}

@@ -21,6 +21,8 @@ type Documents = {
     "\n  query FindTeamById($id: ID!) {\n    findTeamById(id: $id) {\n      id\n      name\n      trainer {\n        id\n        name\n      }\n      pokemons {\n        id\n        pokemonId\n        pokemonName\n      }\n    }\n  }\n": typeof types.FindTeamByIdDocument,
     "\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          pokemonId\n          pokemonName\n          nickname\n          position\n        }\n      }\n    }\n  }\n": typeof types.MeDocument,
     "\n  query FindTrainerByName($name: String!) {\n    findTrainerByName(name: $name) {\n      id\n      name\n      email\n    }\n  }\n": typeof types.FindTrainerByNameDocument,
+    "\n  query SearchTrainers($name: String!) { searchTrainers(name: $name) { id name } }\n": typeof types.SearchTrainersDocument,
+    "\n  query FindTrainersByIds($ids: [ID!]!) { findTrainersByIds(ids: $ids) { id name } }\n": typeof types.FindTrainersByIdsDocument,
 };
 const documents: Documents = {
     "\n  mutation CreateTeam($name: String!) {\n    createTeam(name: $name) {\n      id\n      name\n    }\n  }\n": types.CreateTeamDocument,
@@ -30,6 +32,8 @@ const documents: Documents = {
     "\n  query FindTeamById($id: ID!) {\n    findTeamById(id: $id) {\n      id\n      name\n      trainer {\n        id\n        name\n      }\n      pokemons {\n        id\n        pokemonId\n        pokemonName\n      }\n    }\n  }\n": types.FindTeamByIdDocument,
     "\n  query me {\n    me {\n      id\n      name\n      email\n      team {\n        id\n        name\n        pokemons{\n          id\n          pokemonId\n          pokemonName\n          nickname\n          position\n        }\n      }\n    }\n  }\n": types.MeDocument,
     "\n  query FindTrainerByName($name: String!) {\n    findTrainerByName(name: $name) {\n      id\n      name\n      email\n    }\n  }\n": types.FindTrainerByNameDocument,
+    "\n  query SearchTrainers($name: String!) { searchTrainers(name: $name) { id name } }\n": types.SearchTrainersDocument,
+    "\n  query FindTrainersByIds($ids: [ID!]!) { findTrainersByIds(ids: $ids) { id name } }\n": types.FindTrainersByIdsDocument,
 };
 
 /**
@@ -74,6 +78,14 @@ export function graphql(source: "\n  query me {\n    me {\n      id\n      name\
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query FindTrainerByName($name: String!) {\n    findTrainerByName(name: $name) {\n      id\n      name\n      email\n    }\n  }\n"): (typeof documents)["\n  query FindTrainerByName($name: String!) {\n    findTrainerByName(name: $name) {\n      id\n      name\n      email\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query SearchTrainers($name: String!) { searchTrainers(name: $name) { id name } }\n"): (typeof documents)["\n  query SearchTrainers($name: String!) { searchTrainers(name: $name) { id name } }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query FindTrainersByIds($ids: [ID!]!) { findTrainersByIds(ids: $ids) { id name } }\n"): (typeof documents)["\n  query FindTrainersByIds($ids: [ID!]!) { findTrainersByIds(ids: $ids) { id name } }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
