@@ -24,7 +24,7 @@ export default function Navbar() {
     const [term, setTerm] = useState('')
     const [menuOpen, setMenuOpen] = useState(false)
 
-    const [searchTrainer, { data: trainerData, loading: trainerLoading }] = useLazyQuery(FindTrainerByName)
+    const [searchTrainer, { data: trainerData, loading: trainerLoading }] = useLazyQuery(SEARCH_TRAINERS)
     const [findAllTeams, { data: teamsData, loading: teamsLoading }] = useLazyQuery(FIND_ALL_TEAMS)
 
     const handleSearch = (e: FormEvent<HTMLFormElement>) => {
@@ -54,7 +54,10 @@ export default function Navbar() {
     return (
         <div className="border-b border-border bg-card">
             <nav className="flex items-center justify-between gap-4 px-4 py-3">
-                <span className="font-heading text-lg font-semibold text-foreground">PokeTeams</span>
+                <div className="flex items-center gap-4">
+                    <Link to="/" className="font-heading text-lg font-semibold text-foreground">PokeTeams</Link>
+                    <Link to="/chat" className="text-sm text-muted-foreground hover:text-foreground">Chat</Link>
+                </div>
 
                 <form onSubmit={handleSearch} className="flex flex-1 max-w-md items-center gap-2">
                     <select
@@ -109,13 +112,14 @@ export default function Navbar() {
                     )}
 
                     {mode === 'trainer' && trainerData && (
-                        trainerData.findTrainerByName ? (
-                            <div>
-                                <p className="text-sm font-medium">{trainerData.findTrainerByName.name}</p>
-                                <p className="text-xs text-muted-foreground">{trainerData.findTrainerByName.email}</p>
-                            </div>
-                        ) : (
+                        trainerData.searchTrainers.length === 0 ? (
                             <p className="text-xs text-muted-foreground">Sin resultados</p>
+                        ) : (
+                            <ul className="flex flex-col gap-1">
+                                {trainerData.searchTrainers.map(t => (
+                                    <li key={t.id} className="text-sm">{t.name}</li>
+                                ))}
+                            </ul>
                         )
                     )}
 

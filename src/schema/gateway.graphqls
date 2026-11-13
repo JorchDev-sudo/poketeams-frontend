@@ -1,0 +1,81 @@
+type Query {
+    findPokemonById(id: Int!): ApiPokemon!
+    findPokemonByName(name: String!): ApiPokemon!
+
+    findTrainerById(id: ID!): Trainer!
+    findTrainerByName(name: String!): Trainer!
+
+    findTrainersByIds(ids: [ID!]!): [PublicTrainer!]!
+    searchTrainers(name: String!): [PublicTrainer!]!
+
+    me: Trainer!
+
+    findTeamById(id: ID!): Team!
+    findAllTeams: [Team!]!
+}
+
+type Mutation {
+    createTeam(name: String!): Team!
+
+    #changePokemonNickName(nickname: String!): Pokemon
+
+    updateProfile(id:ID!, input: UpdateProfileInput!): Trainer!
+
+    syncPokemons(pokemons: [PokemonSyncInput]!): Team!
+
+    deleteMyTrainer: Boolean!
+}
+
+type Trainer {
+    id: ID!
+    name: String!
+    email: String!
+    team: Team
+}
+
+type PublicTrainer { id: ID!  name: String! }
+
+type Team{
+    id: ID!
+    name: String!
+    trainer: Trainer!
+    pokemons: [TeamPokemon]
+}
+
+type ApiPokemon {
+    id: Int!
+    name: String!
+    types: [String!]!
+    moves: [String!]!
+}
+
+type TeamPokemon {
+    id: ID!
+
+    pokemonId: Int!
+    pokemonName: String!
+
+    nickname: String
+    position: Int!
+}
+
+input UpdateProfileInput {
+    name: String!
+    email: String!
+}
+
+input ChangePasswordInput {
+    currentPassword: String!
+    newPassword: String!
+}
+
+input PokemonSyncInput {
+    id: ID
+
+    pokemonId: Int!
+    pokemonName: String!
+
+    nickname: String
+    position: Int!
+}
+
