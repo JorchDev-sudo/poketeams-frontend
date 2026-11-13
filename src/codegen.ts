@@ -1,17 +1,19 @@
 import type { CodegenConfig } from '@graphql-codegen/cli'
-//TODO cambiar la url del schema a un archivo .env
 
 const config: CodegenConfig = {
-  schema: 'http://localhost:8080/graphql',
-  documents: ['src/**/*.tsx', 'src/**/*.ts'],
   generates: {
-    './src/graphql/generated/': {
+    'src/graphql/generated/': {
+      schema: './src/schema/gateway.graphqls',
+      documents: ['src/graphql/**/*.ts', '!src/graphql/generated/**'],
       preset: 'client',
-      config: {
-        documentMode: 'documentNode'
-      }
-    }
-  }
+      config: { documentMode: 'documentNode', scalars: { ID: 'string' } },
+    },
+    'src/features/chat/graphql/generated/': {
+      schema: './src/schema/chat.graphqls',
+      documents: ['src/features/chat/graphql/*.ts', '!src/features/chat/graphql/generated/**'],
+      preset: 'client',
+      config: { documentMode: 'documentNode', scalars: { ID: 'string', DateTime: 'string' } },
+    },
+  },
 }
-
 export default config

@@ -1,50 +1,66 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { setLogoutCallback } from '@/lib/apollo'
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
+import { getCookie } from '@/lib/csrf'
+import { client, setLogoutCallback } from '@/lib/apollo'
+import { chatClient } from '@/features/chat/lib/chatClient'
 
-type jwtToken = string | null
+const apiBaseUrl = import.meta.env.VITE_API_GRAPHQL_URL
 
-interface AuthContextType {
+interface AuthUser { id: string; name: string; email: string }
+interface AuthContextValue {
+    user: AuthUser | null
     isAuthenticated: boolean
-    token: jwtToken
-    login: (token: string) => void
-    logout: () => void
+    loading: boolean
+    login: () => void
+    logout: () => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextValue | null>(null)
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [token, setToken] = useState<jwtToken>(
-        localStorage.getItem('token')
-    )
-
-    const login = (newToken: string) => {
-        localStorage.setItem('token', newToken)
-        setToken(newToken)
-    }
-
-    const logout = () => {
-        localStorage.removeItem('token')
-        setToken(null)
-    }
+export function AuthProvider({ children }: { children: ReactNode }) {
+    const [user, setUser] = useState<AuthUser | null>(null)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        setLogoutCallback(logout)
+        fetch(`${apiBaseUrl}/auth/me`, { credentials: 'include' })
+            .then(res => (res.ok ? res.json() : null))
+            .then(setUser)
+            .catch(() => setUser(null))
+            .finally(() => setLoading(false))
+    }, [])
+
+    useEffect(() => {
+        setLogoutCallback(() => {
+            setUser(null)
+            void client.clearStore()
+            void chatClient.clearStore()
+        })
+    }, [])
+
+    const login = useCallback(() => { window.location.href = `${apiBaseUrl}/auth/login` }, [])
+
+    const logout = useCallback(async () => {
+        try {
+            await fetch(`${apiBaseUrl}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'X-XSRF-TOKEN': getCookie('XSRF-TOKEN') ?? '' },
+            })
+        } catch (e) {
+            console.error('Error during logout', e)
+        } finally {
+            window.location.href = '/'
+        }
     }, [])
 
     return (
-        <AuthContext.Provider value={{
-            isAuthenticated: !!token,
-            token,
-            login,
-            logout
-        }}> {children} </AuthContext.Provider>
+        <AuthContext.Provider value={{ user, isAuthenticated: user !== null, loading, login, logout }}>
+            {!loading && children}
+        </AuthContext.Provider>
     )
 }
 
 export function useAuth() {
-    const context = useContext(AuthContext)
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider')
-    }
-    return context
+    const ctx = useContext(AuthContext)
+    if (!ctx) throw new Error('useAuth must be used inside AuthProvider')
+    return ctx
 }

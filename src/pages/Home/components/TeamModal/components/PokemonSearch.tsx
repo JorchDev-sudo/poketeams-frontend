@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react"
 import { useDebounce } from 'use-debounce'
-import { getPokemons } from "@/lib/api"
+import { getPokemons, type PokemonSuggestion } from "@/lib/api.ts"
 
 interface Props {
     onAddPokemon: (pokemonName: string, nickname: string, pokemonId: number) => void
-}
-
-interface PokemonSuggestion {
-    name: string
-    url: string
-    pokemonId: number
 }
 
 export default function PokemonsSearch({ onAddPokemon }: Props) {
@@ -18,11 +12,12 @@ export default function PokemonsSearch({ onAddPokemon }: Props) {
     const [results, setResults] = useState<PokemonSuggestion[]>([])
 
     useEffect(() => {
-        if (debouncedValue) {
-            getPokemons(debouncedValue).then(data => setResults(data))
-        } else {
-            setResults([])
-        }
+        if (!debouncedValue) { setResults([]); return }
+        const controller = new AbortController()
+        getPokemons(debouncedValue, controller.signal)
+            .then(setResults)
+            .catch(e => { if (e.name !== 'AbortError') console.error(e) })
+        return () => controller.abort()   // se ejecuta al cambiar el valor o desmontar
     }, [debouncedValue])
 
     return (
