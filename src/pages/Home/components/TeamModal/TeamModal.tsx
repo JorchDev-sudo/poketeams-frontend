@@ -14,6 +14,7 @@ import {
 import { SortableContext, verticalListSortingStrategy, arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { SortablePokemonItem } from '@/components/shared/Sortable/SortablePokemonItem'
 import PokemonsSearch from './components/PokemonSearch';
+import { generateTempId } from '@/lib/id';
 
 interface Pokemon {
     id: string;
@@ -58,7 +59,7 @@ function draftReducer(state: DraftPokemon[], action: DraftAction): DraftPokemon[
             }))
         case 'ADD':
             return [...state, {
-                id: `temp:${crypto.randomUUID()}`,
+                id: generateTempId(),
                 pokemonId: action.pokemonId,
                 pokemonName: action.pokemonName,
                 nickname: action.nickname,

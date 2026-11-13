@@ -14,9 +14,7 @@ export default defineConfig({
     },
   },
   server: {
-    proxy: {
-      '/api': { target: 'http://localhost:8080', changeOrigin: true, rewrite: p => p.replace(/^\/api/, '') },
-      '/api/chat-ws': { target: 'ws://localhost:8080', ws: true, rewrite: p => p.replace(/^\/api/, '') },
-    },
+    host: '0.0.0.0',
+    port: 5173,
   }
 })

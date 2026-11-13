@@ -1,16 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { RegisterPage } from '../pages/Auth/RegisterPage'
+import { LoginPage } from '../pages/Auth/LoginPage'
 import HomePage from '../pages/Home/Home'
 import ChatPage from '@/features/chat/ChatPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const { isAuthenticated } = useAuth()
-    return isAuthenticated ? children : <Navigate to="/dashboard" replace />
-}
-
-function LoginButton() {
-    const { login } = useAuth();
-    return <button onClick={login}>Iniciar sesión con Auth0</button>;
+    console.log('ProtectedRoute isAuthenticated:', isAuthenticated)
+    return isAuthenticated ? children : <Navigate to="/login" />
 }
 
 export function AppRouter() {
